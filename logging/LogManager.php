@@ -1,6 +1,11 @@
 <?php
 require_once 'logging/model/LogModel.php';
-abstract class LogAction{
+
+/**
+ * Different event types that can be logged
+ * Needs expanding upon
+ */
+abstract class LogAction {
 	const LOGIN = 'User Login';
 	const LOGOUT = 'User Logout';
 	const SESSIONCREATE = 'Session Created';
@@ -10,12 +15,13 @@ abstract class LogAction{
 	const PAGEVIEW = 'Page Viewed';
 	const QUERY = 'Query Run';
 }
-class LogManager{
-	
-	public static function log($action, $username,  $description,$querystr){
-		
+
+class LogManager {
+
+	public static function log($action, $username, $description, $querystr) {
+
 		LogModel::log($action, $username, time(), $description, $querystr);
 	}
-	
+
 }
 ?>

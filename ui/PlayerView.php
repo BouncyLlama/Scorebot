@@ -8,6 +8,7 @@ session_start();
 		session_destroy();
 		header( 'Location: ../index.php' ) ;
 	}
+		//probably should improve this
 	if(! AuthenticationManager::checkSession()){
 		die("You've been a naughty boy");
 	}

@@ -1,0 +1,2 @@
+Run dbcreate script to set up database
+connection settings are in Config.php

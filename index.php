@@ -1,10 +1,14 @@
 <?php
 require_once 'authentication/AuthenticationManager.php';
 	session_start(); 
+	//If logged in, go to player view.
+	//Probably change later based on if player/admin etc
 	if(AuthenticationManager::checkSession() == TRUE){
 		header( 'Location: ui/PlayerView.php' ) ;
 	}
+	
 	else{
+		//should really move these and make better
 		if(isset($_POST['login'])){
 			
 			if(AuthenticationManager::logIn($_POST['username'], $_POST['password'])){
@@ -18,9 +22,10 @@ require_once 'authentication/AuthenticationManager.php';
 			if(AuthenticationManager::register($_POST['username'], $_POST['password'], $_POST['team']))
 			{
 				if(AuthenticationManager::logIn($_POST['username'], $_POST['password'])){
-				
+				header( 'Location: ui/PlayerView.php' ) ;
 			}
 			else{
+				//should never happen
 			header( 'Location: http://google.com' ) ;
 			}
 			}

@@ -1,7 +1,11 @@
 <?php
-class LogModel{
-	
-	public static function log($action,$username,$timestamp,$description,$query){
+class LogModel {
+
+	/**
+	 * Log an action
+	 * Accepts null values for description and query
+	 */
+	public static function log($action, $username, $timestamp, $description, $query) {
 		QueryManager::escape($action);
 		QueryManager::escape($username);
 		QueryManager::escape($timestamp);
@@ -12,7 +16,6 @@ class LogModel{
 		";
 		QueryManager::query($querystr);
 	}
-	
-	
+
 }
 ?>
