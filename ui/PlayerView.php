@@ -77,6 +77,9 @@ window.onload=function() {
     	if(isset($_POST['getscores'])){
     		echo "document.getElementById('tabHeader_2').click();";
     	}
+		if(isset($_POST['servicepassword'])){
+			echo "document.getElementById('tabHeader_5').click();";
+		}
     ?>
 };
   
@@ -95,6 +98,7 @@ window.onload=function() {
       <ul>
         <li id="tabHeader_1">Flags</li>
         <li id="tabHeader_2">Score</li>
+        <li id="tabHeader_5">Assets</li>
         <li id="tabHeader_4">Files</li>
         <li id="tabHeader_3">Sign Out</li>
       </ul>
@@ -168,6 +172,82 @@ window.onload=function() {
 
         </div>
       </div>
+      
+      
+           <div class="tabpage" id="tabpage_5"style="clear:left;">
+        <h2>Assets</h2>
+        <p>
+        	 
+        <?php
+        if(isset($_POST['servicepassword'])){
+        	Player::setServicePassword($_POST['serviceid'],$_POST['password']);
+        }
+        $result = Player::getAssets();
+		$currentAsset ="";
+		while($row = mysql_fetch_assoc($result)){
+			$check = Player::getLatestServiceCheck($row['id']);
+			$time = date('g:i:s A',$check['timestamp']);
+			if(!isset($check['timestamp'])){
+			$available = "Unavailable";
+			$intact ="Compromised";	
+			}
+			else {
+			$available = $check['available']? "Available":"Unavailable";
+			$intact = $check['intact']  ?"Intact":"Compromised";		
+			}
+
+			if(strcmp($row['asset_name'],$currentAsset)!=0){
+				$tr = (strcmp($currentAsset,"") ==0? "": "</table>" )."
+				<table class='tftable' border='1'>
+				<caption><h2>{$row['asset_name']}@{$row['ip']}</h2></caption>
+				<tr>
+					<th>Name</th>
+					<th>Port</th>
+					<th>Username</th>
+					<th>Password</th>
+					<th>Availability</th>
+					<th>Integrity</th>
+					<th>Last Check</th>
+				</tr>
+				<tr>
+						<td>{$row['name']}</td>
+						<td> {$row['port']}</td>
+						<td>{$row['username']} </td>
+						<td> <form action='PlayerView.php' method='POST'> <input type='hidden' name='serviceid' value='{$row['id']}'/><input type='text' name='password' value ='{$row['password']}'/><input type='submit' name='servicepassword' value='Change'/></form></td>
+						<td>$available</td>
+						<td>$intact </td>
+						<td>$time</td>
+					</tr>
+				";
+				echo $tr;
+			}
+			else{
+					$tr = "
+					<tr>
+						<td>{$row['name']}</td>
+						<td> {$row['port']}</td>
+						<td>{$row['username']} </td>
+						<td> <form action='PlayerView.php' method='POST'> <input type='hidden' name='serviceid' value='{$row['id']}'/><input type='text' name='password' value ='{$row['password']}'/><input type='submit' name='servicepassword' value='Change'/></form></td>
+						<td>$available</td>
+						<td>$intact </td>
+						<td>$time</td>
+					</tr>
+				";
+				echo $tr;
+			}
+		}
+        
+        
+        ?>
+   </table>
+
+
+        
+        </p>
+      </div>
+      
+      
+      
       <div class="tabpage" id="tabpage_3">
         <h2>Sign Out</h2>
         <p>

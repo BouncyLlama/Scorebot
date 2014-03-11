@@ -4,6 +4,62 @@ require_once 'logging/LogManager.php';
 date_default_timezone_set('America/New_York');
 
 class PlayerModel {
+		
+		public static function getLatestServiceCheck($id){
+		QueryManager::escape($id);
+			$querystr = "
+			SELECT sc.available,sc.intact,s.id, sc.timestamp 
+			FROM servicechecks AS sc 
+				JOIN services AS s ON sc.service_id = s.id 
+					JOIN assets as a ON s.asset_id = a.id 
+						WHERE s.id = '$id' 
+						ORDER BY timestamp DESC
+			
+			";
+			LogManager::log(LogAction::QUERY, mysql_real_escape_string($_SESSION['username']), null, $querystr);
+			$result = QueryManager::query($querystr);
+			if(!$result){
+				return FALSE;
+			}
+			return mysql_fetch_assoc($result);
+		}
+	public static function setServicePassword($id, $password) {
+		QueryManager::escape($id);
+		QueryManager::escape($password);
+		$querystr = "
+		UPDATE services SET password='$password' WHERE id='$id'
+		";
+		QueryManager::query($querystr);
+		LogManager::log(LogAction::QUERY, mysql_real_escape_string($_SESSION['username']), null, $querystr);
+	}
+
+	public static function getService($id) {
+		QueryManager::escape($id);
+		$querystr = "
+			SELECT s.*,a.ip,a.name AS asset_name, a.team 
+			FROM services AS s 
+				JOIN assets AS a 
+				ON s.asset_id = a.id
+					WHERE s.id=$id
+			";
+		LogManager::log(LogAction::QUERY, mysql_real_escape_string($_SESSION['username']), null, $querystr);
+		return Querymanager::query($querystr);
+	}
+
+	public static function getAssets($team) {
+		QueryManager::escape($team);
+		$querystr = "
+		SELECT s.*,a.ip,a.name AS asset_name, a.team 
+		FROM services AS s 
+			JOIN assets AS a 
+			ON s.asset_id = a.id
+				WHERE team='$team' ORDER BY asset_name,s.id
+		
+		";
+		$result = QueryManager::query($querystr);
+		LogManager::log(LogAction::QUERY, mysql_real_escape_string($_SESSION['username']), null, $querystr);
+		return $result;
+	}
 
 	/**
 	 * Get all flags

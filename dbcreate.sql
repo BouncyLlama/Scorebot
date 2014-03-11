@@ -52,3 +52,28 @@ CREATE TABLE `users` (
   `team` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+CREATE TABLE `assets` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(15) DEFAULT NULL,
+  `name` varchar(128) DEFAULT NULL,
+  `team` varchar(128) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+CREATE TABLE `servicechecks` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `service_id` bigint(20) DEFAULT NULL,
+  `available` bit(1) DEFAULT NULL,
+  `intact` bit(1) DEFAULT NULL,
+  `timestamp` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=latin1;
+CREATE TABLE `services` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` varchar(128) DEFAULT NULL,
+  `port` int(11) DEFAULT NULL,
+  `protocol` varchar(128) DEFAULT NULL,
+  `username` varchar(128) DEFAULT NULL,
+  `password` varchar(128) DEFAULT NULL,
+  `asset_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;

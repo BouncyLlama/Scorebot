@@ -44,7 +44,7 @@ require_once 'logging/LogManager.php';
 		$username=mysql_real_escape_string($username);
 		$querystr = "
 		DELETE FROM sessions
-			WHERE username='$username'
+			WHERE username='$username' OR cookie='$cookie'
 		";
 		LogManager::log(LogAction::QUERY, $username, null, $querystr);
 		QueryManager::query($querystr);

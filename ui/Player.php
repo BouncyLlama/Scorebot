@@ -2,6 +2,33 @@
 require_once 'ui/model/PlayerModel.php';
 require_once 'logging/LogManager.php';
 class Player {
+	public static function getLatestServiceCheck($id){
+		$qresult = PlayerModel::getService($id);
+		$result = mysql_fetch_assoc($qresult);
+		if(!isset($result['team'])){
+			return FALSE;
+		}
+		
+		if (strcmp($result['team'], $_SESSION['team']) != 0) {
+			return FALSE;
+		}
+		return PlayerModel::getLatestServiceCheck($id);
+	}
+	public static function setServicePassword($id, $password) {
+		$result = PlayerModel::getService($id);
+		$service = mysql_fetch_assoc($result);
+		if (strcmp($service['team'], $_SESSION['team']) != 0) {
+			return FALSE;
+		}
+		PlayerModel::setServicePassword($id, $password);
+		return TRUE;
+	}
+
+	public static function getAssets() {
+		return PlayerModel::getAssets($_SESSION['team']);
+
+	}
+
 	/**
 	 * Get all flags
 	 */
