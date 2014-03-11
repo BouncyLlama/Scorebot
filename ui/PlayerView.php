@@ -27,7 +27,7 @@ session_start();
       href="../images/tux-matrix.png">
 
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-	<script src = "../scripts/Chart.js"></script>
+
   <script type="text/javascript" src="../scripts/jquery-2.1.0.js"></script>
   <script type="text/javascript" src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script type="text/javascript" src="../scripts/tabs.js"></script>
@@ -50,7 +50,35 @@ session_start();
     }
 });
   });
+window.onload=function() {
 
+  // get tab container
+  var container = document.getElementById("tabContainer");
+    // set current tab
+    var navitem = container.querySelector(".tabs ul li");
+    //store which tab we are on
+    var ident = navitem.id.split("_")[1];
+    navitem.parentNode.setAttribute("data-current",ident);
+    //set current tab with class of activetabheader
+    navitem.setAttribute("class","tabActiveHeader");
+
+    //hide two tab contents we don't need
+    var pages = container.querySelectorAll(".tabpage");
+    for (var i = 1; i < pages.length; i++) {
+      pages[i].style.display="none";
+    }
+
+    //this adds click event to tabs
+    var tabs = container.querySelectorAll(".tabs ul li");
+    for (var i = 0; i < tabs.length; i++) {
+      tabs[i].onclick=displayPage;
+    }
+    <?php 
+    	if(isset($_POST['getscores'])){
+    		echo "document.getElementById('tabHeader_2').click();";
+    	}
+    ?>
+};
   
   </script>
 </head>
@@ -120,18 +148,19 @@ session_start();
         
         	</form>
         	 
-        	
+        
         	</p>
        
         <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto">
-        			<?php
+        			
+       
+	<?php
         			if(isset($_POST['getscores'])){
         				$scoresJSON = Player::getFlagScores();
-        				echo "<script> getScores('$scoresJSON') </script>";
+        				echo "<script>getScores('$scoresJSON'); </script>";
+        				
         			}
         		?>
-       
-
 
 
 
