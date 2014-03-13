@@ -1,9 +1,10 @@
-
+from ftplib import FTP
 import ServiceCheckInterface
 from ServiceCheckInterface import *
 class FTPCheck(ServiceCheckInterface):
     
     def checkServices(self):
+        ServiceCheckInterface.setup(self,"FTP","FTP")
         i=0
         for s in self.services:
             ftp = FTP()
@@ -28,6 +29,8 @@ class FTPCheck(ServiceCheckInterface):
                 ftp.quit()
                 
             i+=1
+            
+        ServiceCheckInterface.submitResults(self)
         
         
  

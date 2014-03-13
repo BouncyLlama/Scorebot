@@ -67,7 +67,7 @@ class AuthenticationManager {
 		$now = $date -> getTimestamp();
 
 		if ($now - $timestamp > Config::$SESSION_TIMEOUT) {
-			AuthenticationModel::destroySession(session_id(), $_SERVER['REMOTE_ADDR']);
+			AuthenticationModel::destroySession(session_id(), $_SERVER['REMOTE_ADDR'],$_SESSION['username']);
 			return FALSE;
 
 		}

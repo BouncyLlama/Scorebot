@@ -9,6 +9,9 @@ stopTime = 2394562060
 startTime =1394562060
 interval = 5
 lastRun = time.time()
+checkers = list()
+checkers.append(FTPCheck())
+checkers.append(HTTPCheck())
 while True:
     
     if time.time() < startTime :
@@ -20,11 +23,11 @@ while True:
     if interval +lastRun > time.time() :
         time.sleep(1)
         continue
-        
-    ftp = FTPCheck()
-    ftp.initialize("FTP","FTP")
-    ftp.checkServices()
-    ftp.submitResults()
+      
+    for c in checkers:
+        c.checkServices()  
+
+    
     
     
     lastRun = time.time()

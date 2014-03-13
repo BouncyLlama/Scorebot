@@ -1,10 +1,10 @@
 #!/usr/bin/python
 import Database
 import time
-from ftplib import FTP
+
 from Database import *
 class ServiceCheckInterface:
-    def initialize(self,protocol,name):
+    def setup (self,protocol,name):
         self.db = Database()
         self.db.setup()
         self.protocol = protocol

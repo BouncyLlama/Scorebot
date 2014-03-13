@@ -6,7 +6,7 @@ class Config{
 	static $DB_PASS= '';
 	static $DB_NAME= 'scorebot2';
 	static $PW_SALT = 'supercalifragalisticexpialidocious';
-	static $SESSION_TIMEOUT = 3600000; //One Hour
+	static $SESSION_TIMEOUT = 21600; //6 hours
 	static $IS_TEAM_EXERCISE = TRUE;
 	static $ROOT = "/var/www/";	
 	static $IMAGES = '/var/www/images/';
