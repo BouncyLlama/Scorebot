@@ -36,10 +36,12 @@ class PlayerModel {
 	public static function getService($id) {
 		QueryManager::escape($id);
 		$querystr = "
-			SELECT s.*,a.ip,a.name AS asset_name, a.team 
+			SELECT s.*,a.ip,a.name AS asset_name, t.name AS team
 			FROM services AS s 
 				JOIN assets AS a 
 				ON s.asset_id = a.id
+				 JOIN teams AS t
+				  ON a.team=t.id
 					WHERE s.id=$id
 			";
 		LogManager::log(LogAction::QUERY, mysql_real_escape_string($_SESSION['username']), null, $querystr);
@@ -49,10 +51,12 @@ class PlayerModel {
 	public static function getAssets($team) {
 		QueryManager::escape($team);
 		$querystr = "
-		SELECT s.*,a.ip,a.name AS asset_name, a.team 
+		SELECT s.*,a.ip,a.name AS asset_name,t.name AS team
 		FROM services AS s 
 			JOIN assets AS a 
 			ON s.asset_id = a.id
+			  JOIN teams AS t
+			  ON t.id=a.team
 				WHERE team='$team' ORDER BY asset_name,s.id
 		
 		";
@@ -127,6 +131,7 @@ class PlayerModel {
 		INSERT INTO flagsubmissions (flag_id,submission,value,username,correct,timestamp) VALUES('$id','$submission','$value','$username', IF('$submission'='$value',1,0),'$time')
 		";
 		LogManager::log(LogAction::QUERY, mysql_real_escape_string($_SESSION['username']), null, $querystr);
+        LogManager::log(LogAction::FLAGSUBMIT,$username,$submission,$querystr);
 		QueryManager::query($querystr);
 		if (strcmp($value, $submission) == 0) {
 			return TRUE;
@@ -162,11 +167,13 @@ class PlayerModel {
 		if (Config::$IS_TEAM_EXERCISE) {
 
 			$querystr = "
-			 SELECT f.points,fs.username,u.team,fs.timestamp FROM flagsubmissions AS fs
+			 SELECT f.points,fs.username,t.name AS team,fs.timestamp FROM flagsubmissions AS fs
 			 	JOIN flags AS f 
 			 	ON f.id=fs.flag_id and fs.correct=1
 			 		JOIN users as u
 			 		ON u.username = fs.username
+			 		  JOIN teams as t
+			 		  ON u.team = t.id
 			 			ORDER BY fs.timestamp
 			 ";
 

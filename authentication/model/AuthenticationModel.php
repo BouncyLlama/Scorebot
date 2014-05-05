@@ -24,17 +24,33 @@ require_once 'logging/LogManager.php';
 		$username=mysql_real_escape_string($username);
 		$password=mysql_real_escape_string($password);
 		$team=mysql_real_escape_string($team);
-		
-		
-		$querystr="
-		INSERT INTO users (username,password,team) VALUES('$username','$password','$team')
-		";
+
+
+        $querystr = "
+			INSERT INTO teams(name) VALUES('$team') ON DUPLICATE KEY UPDATE name=name;
+			";
+
 		LogManager::log(LogAction::QUERY, $username, null, $querystr);
 		if(QueryManager::query($querystr)){
-			return TRUE;
+            $querystr = "SELECT id from teams where name='$team'";
+            LogManager::log(LogAction::QUERY, $username, null, $querystr);
+            $results = QueryManager::query($querystr);
+            $id = mysql_fetch_assoc($results)['id'];
+
+            $querystr="
+		INSERT INTO users (username,password,team) VALUES('$username','$password','$id');
+
+		";
+            LogManager::log(LogAction::QUERY, $username, null, $querystr);
+            if(QueryManager::query($querystr)) {
+                return TRUE;
+            }
+            else{
+                return FALSE;
+            }
 		}
 		else {
-			{return FALSE;}
+			return FALSE;
 		}
 		
 	}
