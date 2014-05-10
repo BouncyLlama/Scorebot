@@ -95,15 +95,27 @@ session_start();
                     echo "document.getElementById('tabHeader_5').click();";
                 }
                  if(isset($_POST['editflag'])){
-                    echo "document.getElementById('tabHeader_1').click();";
+                    echo "document.getElementById('tabHeader_2').click();";
                     Admin::updateFlag($_POST['id'],$_POST['name'],$_POST['description'],$_POST['points'],$_POST['value'],$_POST['team']);
                 }
                 if(isset($_POST['deleteflag'])){
                     Admin::deleteFlag($_POST['id']);
+                    echo "document.getElementById('tabHeader_2').click();";
                 }
                  if(isset($_POST['createflag'])){
                     Admin::createFlag($_POST['name'],$_POST['description'],$_POST['points'],$_POST['value'],$_POST['team']);
+               echo "document.getElementById('tabHeader_2').click();";
                 }
+
+                   if(isset($_POST['editplayer'])){
+                    echo "document.getElementById('tabHeader_1').click();";
+                    Admin::updatePlayer($_POST['id'],$_POST['username'],$_POST['handle'],$_POST['role'],$_POST['team'],$_POST['password']);
+                }
+                if(isset($_POST['deleteplayer'])){
+                    Admin::deletePlayer($_POST['id']);
+                    echo "document.getElementById('tabHeader_1').click();";
+                }
+
             ?>
         };
 
@@ -120,7 +132,7 @@ session_start();
     <div id="tabContainer">
         <div class="tabs">
             <ul>
-                <li id="tabHeader_1"></li>
+                <li id="tabHeader_1">Player Management</li>
                 <li id="tabHeader_2">Flag Management</li>
                 <li id="tabHeader_5"></li>
                 <li id="tabHeader_4"></li>
@@ -129,7 +141,68 @@ session_start();
         </div>
         <div class="tabscontent">
             <div class="tabpage" id="tabpage_1" >
+                <h2>Players</h2>
 
+                <p>
+                <table class='tftable' border='1'>
+                    <caption><h2>Players</h2></caption>
+                    <tr>
+                        <th>Name</th>
+                        <th>Handle</th>
+                        <th>Role</th>
+                        <th>Team</th>
+                        <th>Password</th>
+                        <th>Action</th>
+
+                    </tr>
+                    <?php
+                    $role = "<select name='role'>";
+                    $select = "<select name='team'>";
+                    $result = Admin::getTeams();
+                    while ($row = mysql_fetch_assoc($result)) {
+                        $select = $select . "<option value='{$row['id']}'>{$row['name']}</option> ";
+                    }
+                    $select = $select . "</select>";
+
+                    $result = Admin::getRoles();
+
+                    while ($row = mysql_fetch_assoc($result)) {
+                        $role = $role . "<option value='{$row['id']}'>{$row['role']}</option> ";
+                    }
+                    $role = $role . "<select>";
+
+                    $result = Admin::getPlayers();
+                    while ($row = mysql_fetch_assoc($result)) {
+
+
+                        /// $selectnew=preg_replace("/>".$row['team'],"selected".$row['team'],$select);
+                        $selectnew = preg_replace("/>{$row['team']}/", "selected>{$row['team']}", $select);
+                        $rolenew = preg_replace("/>{$row['role']}/", "selected>{$row['role']}", $role);
+                        $tr = "
+
+                             <tr>
+                             <form action='AdminView.php' method='post'>
+                             <input name='id' type='hidden' value='{$row['id']}'/>
+                            <td><input name='username' type='text' value='{$row['username']}'/></td>
+                            <td><input name='handle' type='text' value='{$row['handle']}'/></td>
+                            <td>$rolenew</td>
+                            <td>$selectnew</td>
+                            <td><input name='password' type='text' value=''/></td>
+                            <td><input name='editplayer' type='submit' value='Edit'/><input name='deleteplayer' type='submit' value='Delete'/></td>
+                            </form>
+                            </tr>
+
+
+                            ";
+                        echo $tr;
+
+                    }
+
+
+                    ?>
+
+
+                </table>
             </div>
             <div class="tabpage" id="tabpage_2">
                 <h2>Flags</h2>

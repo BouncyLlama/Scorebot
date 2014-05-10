@@ -8,6 +8,7 @@
  */
 require_once 'authentication/AuthenticationManager.php';
 require_once 'logging/LogManager.php';
+require_once 'Config.php';
 date_default_timezone_set('America/New_York');
 class AdminModel{
     /**
@@ -28,6 +29,53 @@ class AdminModel{
         return $result;
     }
 
+    public static function getPlayers()
+    {
+        if (!AuthenticationManager::checkSession()) {
+            return NULL;
+        }
+        $querystr = "
+		SELECT u.id,u.username,r.role,u.handle,t.name AS team FROM users AS u
+		  JOIN teams AS t
+		  ON t.id=u.team
+		    JOIN roles AS r
+		    ON r.id = u.role
+		";
+        LogManager::log(LogAction::QUERY, mysql_real_escape_string($_SESSION['username']), null, $querystr);
+        $result = QueryManager::query($querystr);
+        return $result;
+
+    }
+
+    public static function updatePlayer($id, $username, $handle, $role, $team, $password)
+    {
+        QueryManager::escape($id);
+        QueryManager::escape($username);
+        QueryManager::escape($handle);
+        QueryManager::escape($role);
+        QueryManager::escape($team);
+        QueryManager::escape($password);
+        $querystr = "
+        UPDATE users SET username='$username',handle='$handle',role='$role',team='$team'" . (strlen($password) > 1 ? ",password='" . hash("SHA512", $password . Config::$PW_SALT) . "'" : "") . "
+        WHERE id='$id'
+        ";
+        LogManager::log(LogAction::QUERY, mysql_real_escape_string($_SESSION['username']), null, $querystr);
+        $result = QueryManager::query($querystr);
+
+
+    }
+
+    public static function deletePlayer($id)
+    {
+        QueryManager::escape($id);
+
+        $querystr = "
+        DELETE FROM users WHERE id=$id
+        ";
+        LogManager::log(LogAction::QUERY, mysql_real_escape_string($_SESSION['username']), null, $querystr);
+        $result = QueryManager::query($querystr);
+
+    }
     public static function updateFlag($id,$name,$description,$points,$value,$team){
         QueryManager::escape($id);
         QueryManager::escape($name);
@@ -43,7 +91,19 @@ class AdminModel{
         $result = QueryManager::query($querystr);
 
     }
-public static function getTeams(){
+
+    public static function getRoles()
+    {
+        $querystr = "
+    SELECT * from roles
+    ";
+
+        $result = QueryManager::query($querystr);
+        return $result;
+    }
+
+    public static function getTeams()
+    {
     $querystr="
     SELECT * from teams
     ";
